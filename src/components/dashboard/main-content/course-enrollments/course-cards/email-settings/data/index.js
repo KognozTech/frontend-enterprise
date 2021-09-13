@@ -1,0 +1,1 @@
+export { updateEmailSettings } from './actions';

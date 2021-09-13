@@ -1,0 +1,9 @@
+.offer {
+  @extend .text-dark;
+  text-decoration: none;
+
+  &:hover {
+    @extend .text-dark;
+    text-decoration: none;
+  }
+}

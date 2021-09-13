@@ -1,0 +1,7 @@
+.subscription-expiration {
+  .modal-footer {
+    .btn {
+      @extend .btn-primary;
+    }
+  }
+}
