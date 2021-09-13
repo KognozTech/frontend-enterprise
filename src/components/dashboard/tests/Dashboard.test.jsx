@@ -154,7 +154,6 @@ describe('<Dashboard />', () => {
         ...mockSubscriptionPlan,
         daysUntilExpiration: 60,
       },
-      showExpirationNotifications: true,
     };
     renderWithRouter(
       <DashboardWithContext
@@ -167,26 +166,6 @@ describe('<Dashboard />', () => {
     expect(screen.queryByText(SUBSCRIPTION_EXPIRED_MODAL_TITLE)).toBeFalsy();
   });
 
-  it('does not render the modals when 60 >= daysUntilExpiration > 0 and expiration messages are disabled', () => {
-    const expiringSubscriptionUserSubsidyState = {
-      ...initialUserSubsidyState,
-      subscriptionPlan: {
-        ...mockSubscriptionPlan,
-        daysUntilExpiration: 60,
-      },
-      showExpirationNotifications: false,
-    };
-    renderWithRouter(
-      <DashboardWithContext
-        initialAppState={initialAppState}
-        initialUserSubsidyState={expiringSubscriptionUserSubsidyState}
-        initialCourseState={initialCourseState}
-      />,
-    );
-    expect(screen.queryByText(SUBSCRIPTION_EXPIRING_MODAL_TITLE)).toBeFalsy();
-    expect(screen.queryByText(SUBSCRIPTION_EXPIRED_MODAL_TITLE)).toBeFalsy();
-  });
-
   it('renders the subscription expired modal when 0 >= daysUntilExpiration', () => {
     const expiringSubscriptionUserSubsidyState = {
       ...initialUserSubsidyState,
@@ -194,7 +173,6 @@ describe('<Dashboard />', () => {
         ...mockSubscriptionPlan,
         daysUntilExpiration: 0,
       },
-      showExpirationNotifications: true,
     };
     renderWithRouter(
       <DashboardWithContext
@@ -205,26 +183,6 @@ describe('<Dashboard />', () => {
     );
     expect(screen.queryByText(SUBSCRIPTION_EXPIRING_MODAL_TITLE)).toBeFalsy();
     expect(screen.queryByText(SUBSCRIPTION_EXPIRED_MODAL_TITLE)).toBeTruthy();
-  });
-
-  it('does not render the modals when 0 >= daysUntilExpiration and expiration messages are disabled ', () => {
-    const expiringSubscriptionUserSubsidyState = {
-      ...initialUserSubsidyState,
-      subscriptionPlan: {
-        ...mockSubscriptionPlan,
-        daysUntilExpiration: 0,
-      },
-      showExpirationNotifications: false,
-    };
-    renderWithRouter(
-      <DashboardWithContext
-        initialAppState={initialAppState}
-        initialUserSubsidyState={expiringSubscriptionUserSubsidyState}
-        initialCourseState={initialCourseState}
-      />,
-    );
-    expect(screen.queryByText(SUBSCRIPTION_EXPIRING_MODAL_TITLE)).toBeFalsy();
-    expect(screen.queryByText(SUBSCRIPTION_EXPIRED_MODAL_TITLE)).toBeFalsy();
   });
 
   it('renders a sidebar on a large screen', () => {

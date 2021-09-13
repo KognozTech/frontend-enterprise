@@ -18,7 +18,7 @@ export const LICENCE_ACTIVATION_MESSAGE = 'Your license has been successfully ac
 
 export default function Dashboard() {
   const { enterpriseConfig } = useContext(AppContext);
-  const { subscriptionPlan, showExpirationNotifications } = useContext(UserSubsidyContext);
+  const { subscriptionPlan } = useContext(UserSubsidyContext);
   const { state } = useLocation();
   const [isActivationAlertOpen, , closeActivationAlert] = useToggle(!!state?.activationSuccess);
 
@@ -29,6 +29,7 @@ export default function Dashboard() {
   );
 
   const PAGE_TITLE = `Dashboard - ${enterpriseConfig.name}`;
+
   return (
     <>
       <Helmet title={PAGE_TITLE} />
@@ -46,7 +47,7 @@ export default function Dashboard() {
             )}
           </MediaQuery>
           <IntegrationWarningModal isOpen={enterpriseConfig.showIntegrationWarning} />
-          {subscriptionPlan && showExpirationNotifications && <SubscriptionExpirationModal />}
+          {subscriptionPlan && <SubscriptionExpirationModal />}
         </Row>
       </Container>
     </>

@@ -1,18 +1,18 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { AppContext } from '@edx/frontend-platform/react';
-import { CourseContext } from '../../CourseContextProvider'
 
-const EnrollBtnDisabled = ({ enrollLabel }) => {
-     
-  const { enterpriseConfig } = useContext(AppContext);
-  const { state: courseData } = useContext(CourseContext);
+import { EnrollButtonCta } from '../common';
 
- 
-  return (
-     <a href= {`${process.env.LMS_BASE_URL}/enterprise/${enterpriseConfig.uuid}/course/${courseData.activeCourseRun.key}/enroll`}>Enroll Now</a>
+const EnrollBtnDisabled = ({ enrollLabel }) => (
+  <EnrollButtonCta
+    enrollLabel={enrollLabel}
+    as="div"
+    className="btn btn-light btn-block disabled"
+  />
 );
-}
 
 EnrollBtnDisabled.propTypes = {
   enrollLabel: PropTypes.node.isRequired,
+};
+
+export default EnrollBtnDisabled;

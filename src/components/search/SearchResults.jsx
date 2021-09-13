@@ -20,27 +20,27 @@ const SearchResults = ({
   isSearchStalled,
   error,
 }) => {
-  const { refinements } = useContext(SearchContext);
+  const { refinementsFromQueryParams } = useContext(SearchContext);
   const nbHits = useNbHitsFromSearchResults(searchResults);
 
   const query = useMemo(
     () => {
-      if (refinements.q) {
-        return refinements.q;
+      if (refinementsFromQueryParams.q) {
+        return refinementsFromQueryParams.q;
       }
-      return searchState?.query;
+      return searchState && searchState.query;
     },
-    [searchState, JSON.stringify(refinements)],
+    [searchState, refinementsFromQueryParams],
   );
 
   const page = useMemo(
     () => {
-      if (refinements.page) {
-        return refinements.page;
+      if (refinementsFromQueryParams.page) {
+        return refinementsFromQueryParams.page;
       }
-      return searchState?.page;
+      return searchState && searchState.page;
     },
-    [searchState, JSON.stringify(refinements)],
+    [searchState, refinementsFromQueryParams],
   );
 
   const resultsHeading = useMemo(

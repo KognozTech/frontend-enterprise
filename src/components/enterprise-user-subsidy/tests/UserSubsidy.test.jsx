@@ -10,7 +10,6 @@ import { renderWithRouter } from '../../../utils/tests';
 import { LICENSE_STATUS, LOADING_SCREEN_READER_TEXT } from '../data/constants';
 import {
   fetchSubscriptionLicensesForUser,
-  fetchCustomerAgreementData,
 } from '../data/service';
 import { fetchOffers } from '../offers/data/service';
 
@@ -30,15 +29,6 @@ const mockSubscriptionPlan = {
   isActive: true,
   startDate: moment().subtract(1, 'w').toISOString(),
   expirationDate: moment().add(1, 'y').toISOString(),
-};
-
-const mockCustomerAgreementData = {
-  data: {
-    count: 1,
-    results: [{
-      disableExpirationNotifications: false,
-    }],
-  },
 };
 
 // eslint-disable-next-line react/prop-types
@@ -84,7 +74,6 @@ describe('UserSubsidy', () => {
       };
       fetchOffers.mockResolvedValueOnce(response);
       fetchSubscriptionLicensesForUser.mockResolvedValueOnce(response);
-      fetchCustomerAgreementData.mockResolvedValueOnce(response);
     });
 
     afterEach(() => {
@@ -134,7 +123,6 @@ describe('UserSubsidy', () => {
         },
       };
       fetchSubscriptionLicensesForUser.mockResolvedValueOnce(response);
-      fetchCustomerAgreementData.mockResolvedValueOnce(response);
       const Component = (
         <UserSubsidyWithAppContext>
           <HasAccessConsumer />
@@ -144,7 +132,6 @@ describe('UserSubsidy', () => {
         route: `/${TEST_ENTERPRISE_SLUG}`,
       });
       expect(fetchSubscriptionLicensesForUser).toHaveBeenCalledWith(TEST_ENTERPRISE_UUID);
-      expect(fetchCustomerAgreementData).toHaveBeenCalledWith(TEST_ENTERPRISE_UUID);
       expect(fetchOffers).toHaveBeenCalledWith({
         enterprise_uuid: TEST_ENTERPRISE_UUID,
         full_discount_only: 'True',
@@ -164,7 +151,6 @@ describe('UserSubsidy', () => {
           }],
         },
       });
-      fetchCustomerAgreementData.mockResolvedValueOnce(mockCustomerAgreementData);
       const Component = (
         <UserSubsidyWithAppContext>
           <HasAccessConsumer />
@@ -174,7 +160,6 @@ describe('UserSubsidy', () => {
         route: `/${TEST_ENTERPRISE_SLUG}`,
       });
       expect(fetchSubscriptionLicensesForUser).toHaveBeenCalledWith(TEST_ENTERPRISE_UUID);
-      expect(fetchCustomerAgreementData).toHaveBeenCalledWith(TEST_ENTERPRISE_UUID);
       expect(fetchOffers).toHaveBeenCalledWith({
         enterprise_uuid: TEST_ENTERPRISE_UUID,
         full_discount_only: 'True',
@@ -196,7 +181,6 @@ describe('UserSubsidy', () => {
           }],
         },
       });
-      fetchCustomerAgreementData.mockResolvedValueOnce(mockCustomerAgreementData);
       const Component = (
         <UserSubsidyWithAppContext>
           <SubscriptionLicenseConsumer />
@@ -206,7 +190,6 @@ describe('UserSubsidy', () => {
         route: `/${TEST_ENTERPRISE_SLUG}`,
       });
       expect(fetchSubscriptionLicensesForUser).toHaveBeenCalledWith(TEST_ENTERPRISE_UUID);
-      expect(fetchCustomerAgreementData).toHaveBeenCalledWith(TEST_ENTERPRISE_UUID);
       expect(fetchOffers).toHaveBeenCalledWith({
         enterprise_uuid: TEST_ENTERPRISE_UUID,
         full_discount_only: 'True',
@@ -228,8 +211,6 @@ describe('UserSubsidy', () => {
           }],
         },
       });
-      fetchCustomerAgreementData.mockResolvedValueOnce(mockCustomerAgreementData);
-
       const Component = (
         <UserSubsidyWithAppContext>
           <OffersConsumer />
@@ -239,7 +220,6 @@ describe('UserSubsidy', () => {
         route: `/${TEST_ENTERPRISE_SLUG}`,
       });
       expect(fetchSubscriptionLicensesForUser).toHaveBeenCalledWith(TEST_ENTERPRISE_UUID);
-      expect(fetchCustomerAgreementData).toHaveBeenCalledWith(TEST_ENTERPRISE_UUID);
       expect(fetchOffers).toHaveBeenCalledTimes(1);
       expect(fetchOffers).toHaveBeenCalledWith({ enterprise_uuid: TEST_ENTERPRISE_UUID, full_discount_only: 'True', is_active: 'True' });
 
@@ -260,7 +240,6 @@ describe('UserSubsidy', () => {
           }],
         },
       });
-      fetchCustomerAgreementData.mockResolvedValueOnce(mockCustomerAgreementData);
       fetchOffers.mockResolvedValueOnce({
         data: {
           count: 0,
@@ -283,7 +262,6 @@ describe('UserSubsidy', () => {
           }],
         },
       });
-      fetchCustomerAgreementData.mockResolvedValueOnce(mockCustomerAgreementData);
 
       const Component = (
         <UserSubsidyWithAppContext>
@@ -298,7 +276,6 @@ describe('UserSubsidy', () => {
       expect(screen.getByText(LOADING_SCREEN_READER_TEXT)).toBeInTheDocument();
 
       expect(fetchSubscriptionLicensesForUser).toHaveBeenCalledWith(TEST_ENTERPRISE_UUID);
-      expect(fetchCustomerAgreementData).toHaveBeenCalledWith(TEST_ENTERPRISE_UUID);
 
       await waitFor(() => {
         expect(screen.getByTestId('did-i-render')).toBeInTheDocument();
