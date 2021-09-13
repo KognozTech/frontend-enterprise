@@ -3,15 +3,13 @@ import PropTypes from 'prop-types';
 import { AppContext } from '@edx/frontend-platform/react';
 import { CourseContext } from '../../CourseContextProvider';
 
-const EnrollBtnDisabled = ({ enrollLabel }) => {
-     
+const EnrollBtnDisabled = () => {
+
   const { enterpriseConfig } = useContext(AppContext);
   const { state: courseData } = useContext(CourseContext);
-
- 
   return (
-     <a href= {`${process.env.LMS_BASE_URL}/enterprise/${enterpriseConfig.uuid}/course/${courseData.activeCourseRun.key}/enroll`}>Enroll Now</a>
-);
+    <a href={`${process.env.LMS_BASE_URL}/enterprise/${enterpriseConfig.uuid}/course/${courseData.activeCourseRun.key}/enroll`}>Enroll Now</a>
+  );
 };
 
 EnrollBtnDisabled.propTypes = {
