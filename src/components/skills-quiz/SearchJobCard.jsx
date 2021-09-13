@@ -1,68 +1,37 @@
-import React, {
-  useContext, useState, useEffect, useMemo,
-} from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import Truncate from 'react-truncate';
 import Skeleton from 'react-loading-skeleton';
+// TODO: Uncomment this line when jobs are coming as hits from Algolia
+// import { camelCaseObject } from '@edx/frontend-platform/utils';
 import { Card } from '@edx/paragon';
 import { SearchContext } from '@edx/frontend-enterprise-catalog-search';
-import { SkillsContext } from './SkillsContextProvider';
-import { SET_KEY_VALUE } from './data/constants';
 
-const SearchJobCard = ({ index }) => {
+const SearchJobCard = ({ hit, isLoading }) => { // eslint-disable-line no-unused-vars
   const { refinements } = useContext(SearchContext);
-  const { name: jobs } = refinements;
-  const [isLoading, setIsLoading] = useState(true);
-  const { dispatch, state } = useContext(SkillsContext);
-  const { interestedJobs } = state;
-  const jobsToFetch = useMemo(() => {
-    const jobsArray = [];
-    if (jobs) {
-      jobs.forEach(job => jobsArray.push(`name:${job}`));
-    }
-    return jobsArray;
-  },
-  [jobs]);
+  const { skill_names: skills } = refinements;
 
-  useEffect(
-    () => {
-      let fetch = true;
-      fetchJobs(); // eslint-disable-line no-use-before-define
-      return () => { fetch = false; };
-
-      async function fetchJobs() {
-        setIsLoading(true);
-        const { hits } = await index.search('', {
-          facetFilters: [
-            jobsToFetch,
-          ],
-        });
-        if (!fetch) { return; }
-        const jobHits = hits.length <= 3 ? hits : hits.slice(0, 3);
-        dispatch({ type: SET_KEY_VALUE, key: 'interestedJobs', value: jobHits });
-        setIsLoading(false);
-      }
-    },
-    [jobs],
-  );
+  // This statement will be usable once we have jobs data available in Algolia
+  // Currently we are showing skills data in place of that, 'hit' will be passed as props to SearchJobCard
+  // const job = hit ? camelCaseObject(hit) : {};
 
   return (
-    <div>
-      {interestedJobs?.map(job => (
+    <>
+      {skills?.map(skill => (
         <div
-          key={job.name}
+          key={skill}
           className="search-job-card mb-3"
           role="group"
-          aria-label={job.name}
+          aria-label={skill}
         >
           <Card>
             <Card.Body>
-              <Card.Title as="h5" className="card-title mb-3">
+              <Card.Title as="h4" className="card-title mb-1">
                 {isLoading ? (
                   <Skeleton count={1} data-testid="job-title-loading" />
                 ) : (
                   <Truncate lines={1} trimWhitespace>
-                    {job.name}
+                    {skill}
                   </Truncate>
                 )}
               </Card.Title>
@@ -70,32 +39,40 @@ const SearchJobCard = ({ index }) => {
                 <Skeleton duration={0} data-testid="job-content-loading" />
               ) : (
                 <>
-                  {job.job_postings && job.job_postings.length > 0 && (
-                    <div>
-                      <p className="text-muted m-0 medium-font">
-                        <span style={{ fontWeight: 500 }}>Median Salary:</span> {job.job_postings[0].median_salary}
-                      </p>
-                      <p className="text-muted m-0 medium-font">
-                        <span style={{ fontWeight: 500 }}>Job Postings:</span> {job.job_postings[0].unique_postings}
-                      </p>
-                    </div>
-                  )}
+                  <p className="text-muted m-0">
+                    <Truncate lines={1} trimWhitespace>
+                      {skill}
+                    </Truncate>
+                  </p>
                 </>
               )}
             </Card.Body>
           </Card>
         </div>
       ))}
-    </div>
+    </>
   );
 };
 
+const SkeletonJobCard = (props) => (
+  <SearchJobCard {...props} isLoading />
+);
+
 SearchJobCard.propTypes = {
-  index: PropTypes.shape({
-    appId: PropTypes.string,
-    indexName: PropTypes.string,
-    search: PropTypes.func.isRequired,
-  }).isRequired,
+  hit: PropTypes.shape({
+    key: PropTypes.string,
+    title: PropTypes.string,
+    medianSalary: PropTypes.string,
+    jobPostings: PropTypes.string,
+  }),
+  isLoading: PropTypes.bool,
 };
+
+SearchJobCard.defaultProps = {
+  hit: undefined,
+  isLoading: false,
+};
+
+SearchJobCard.Skeleton = SkeletonJobCard;
 
 export default SearchJobCard;

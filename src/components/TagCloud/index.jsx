@@ -5,7 +5,7 @@ import './styles/TagCloud.scss';
 
 const TagCloud = ({ tags, onRemove }) => (
   <>
-    <div>
+    <div style={{ width: '45%' }}>
       <ul className="item">
         {
           tags.map(

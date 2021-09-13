@@ -5,8 +5,6 @@ import {
   FETCH_OFFERS_SUCCESS,
   FETCH_OFFERS_FAILURE,
 } from './constants';
-
-import findOfferRedemptionCount from './utils';
 import * as service from './service';
 
 const fetchOffersRequest = () => ({
@@ -17,7 +15,7 @@ const fetchOffersSuccess = data => ({
   type: FETCH_OFFERS_SUCCESS,
   payload: {
     offers: data.results,
-    offersCount: findOfferRedemptionCount(data.results),
+    offersCount: data.count,
   },
 });
 

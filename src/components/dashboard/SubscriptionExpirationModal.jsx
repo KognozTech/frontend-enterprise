@@ -8,7 +8,6 @@ import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { UserSubsidyContext } from '../enterprise-user-subsidy';
 
 import {
-  SUBSCRIPTION_DAYS_REMAINING_EXCEPTIONAL,
   SUBSCRIPTION_DAYS_REMAINING_SEVERE,
   SUBSCRIPTION_EXPIRED,
   SEEN_SUBSCRIPTION_EXPIRATION_MODAL_COOKIE_PREFIX,
@@ -20,11 +19,11 @@ export const SUBSCRIPTION_EXPIRING_MODAL_TITLE = 'Your subscription is expiring'
 
 const SubscriptionExpirationModal = () => {
   const {
-    enterpriseConfig: { uuid: enterpriseId, contactEmail },
+    enterpriseConfig: { contactEmail },
     config,
   } = useContext(AppContext);
   const { subscriptionPlan } = useContext(UserSubsidyContext);
-  const { daysUntilExpiration, expirationDate, uuid: subscriptionPlanId } = subscriptionPlan;
+  const { daysUntilExpiration, expirationDate } = subscriptionPlan;
 
   const renderTitle = () => {
     if (daysUntilExpiration > SUBSCRIPTION_EXPIRED) {
@@ -117,16 +116,7 @@ const SubscriptionExpirationModal = () => {
     return null;
   }
 
-  const subscriptionExpirationThresholds = [
-    SUBSCRIPTION_DAYS_REMAINING_EXCEPTIONAL,
-    SUBSCRIPTION_DAYS_REMAINING_SEVERE,
-  ];
-
-  const subscriptionExpirationThreshold = subscriptionExpirationThresholds.find(
-    threshold => threshold >= daysUntilExpiration,
-  );
-
-  const seenCurrentExpirationModalCookieName = `${SEEN_SUBSCRIPTION_EXPIRATION_MODAL_COOKIE_PREFIX}${subscriptionExpirationThreshold}-${enterpriseId}-${subscriptionPlanId}`;
+  const seenCurrentExpirationModalCookieName = `${SEEN_SUBSCRIPTION_EXPIRATION_MODAL_COOKIE_PREFIX}${SUBSCRIPTION_DAYS_REMAINING_SEVERE}`;
   const cookies = new Cookies();
   const seenCurrentExpirationModal = cookies.get(seenCurrentExpirationModalCookieName);
   // If they have already seen the expiration modal for their current expiration range (as

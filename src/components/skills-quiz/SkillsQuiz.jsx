@@ -10,7 +10,6 @@ import {
 
 import { MainContent } from '../layout';
 import SkillsQuizStepper from './SkillsQuizStepper';
-import { SkillsContextProvider } from './SkillsContextProvider';
 
 const SkillsQuiz = () => {
   const { enterpriseConfig } = useContext(AppContext);
@@ -23,9 +22,7 @@ const SkillsQuiz = () => {
         <Row>
           <MainContent>
             <SearchData>
-              <SkillsContextProvider>
-                <SkillsQuizStepper />
-              </SkillsContextProvider>
+              <SkillsQuizStepper />
             </SearchData>
           </MainContent>
         </Row>

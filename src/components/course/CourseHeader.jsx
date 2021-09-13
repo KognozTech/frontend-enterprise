@@ -1,28 +1,23 @@
 import React, { useContext, useMemo } from 'react';
 import classNames from 'classnames';
-import {
-  Breadcrumb,
-  Container,
-  Row,
-  Col,
-} from '@edx/paragon';
+import { useLocation } from 'react-router-dom';
+import qs from 'query-string';
+import { Breadcrumb, Container, Alert } from '@edx/paragon';
 import { AppContext } from '@edx/frontend-platform/react';
 
 import { CourseContext } from './CourseContextProvider';
 import CourseRunSelector from './CourseRunSelector';
 import CourseSkills from './CourseSkills';
 import EnrollButton from './EnrollButton';
-import CourseEnrollmentFailedAlert from './CourseEnrollmentFailedAlert';
 
+import { ENROLLMENT_FAILED_QUERY_PARAM } from './data/constants';
 import {
   isArchived,
   getDefaultProgram,
   formatProgramType,
 } from './data/utils';
-import {
-  useCourseSubjects,
-  useCoursePartners,
-} from './data/hooks';
+import { useCourseSubjects, useCoursePartners } from './data/hooks';
+import { useRenderContactHelpText } from '../../utils/hooks';
 
 export default function CourseHeader() {
   const { state } = useContext(CourseContext);
@@ -30,18 +25,36 @@ export default function CourseHeader() {
   const { enterpriseConfig } = useContext(AppContext);
   const { primarySubject } = useCourseSubjects(course);
   const [partners] = useCoursePartners(course);
+  const renderContactHelpText = useRenderContactHelpText(enterpriseConfig);
+  const { search } = useLocation();
+
+  const enrollmentFailed = useMemo(
+    () => qs.parse(search)[ENROLLMENT_FAILED_QUERY_PARAM],
+    [search],
+  );
 
   const defaultProgram = useMemo(
     () => getDefaultProgram(course.programs),
     [course],
   );
 
+  const renderFailedEnrollmentAlert = () => (
+    <>
+      <Container size="lg" className="pt-3">
+        <Alert variant="danger">
+          You were not enrolled in your selected course. In order to enroll, you must accept the data sharing
+          consent terms. Please {renderContactHelpText(Alert.Link)} for further information.
+        </Alert>
+      </Container>
+    </>
+  );
+
   return (
     <div className="course-header">
-      <CourseEnrollmentFailedAlert />
+      {enrollmentFailed && renderFailedEnrollmentAlert()}
       <Container size="lg">
-        <Row className="py-4">
-          <Col xs={12} lg={7}>
+        <div className="row py-4">
+          <div className="col-12 col-lg-7">
             {primarySubject && (
               <div className="small">
                 <Breadcrumb
@@ -105,13 +118,13 @@ export default function CourseHeader() {
                 This course is not part of your company&apos;s curated course catalog.
               </p>
             )}
-          </Col>
+          </div>
           {course.image?.src && (
-            <Col xs={12} lg={{ span: 4, offset: 1 }} className="mt-3 mt-lg-0">
+            <div className="col-12 col-lg-4 offset-lg-1 mt-3 mt-lg-0">
               <img src={course.image.src} alt="course preview" className="w-100" />
-            </Col>
+            </div>
           )}
-        </Row>
+        </div>
       </Container>
     </div>
   );

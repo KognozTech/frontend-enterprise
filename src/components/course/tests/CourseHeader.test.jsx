@@ -1,6 +1,5 @@
 import React from 'react';
 import { AppContext } from '@edx/frontend-platform/react';
-import { useLocation } from 'react-router-dom';
 import { screen, render } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 
@@ -12,10 +11,9 @@ import { COURSE_AVAILABILITY_MAP, COURSE_PACING_MAP } from '../data/constants';
 import { TEST_OWNER } from './data/constants';
 
 jest.mock('react-router-dom', () => ({
-  useLocation: jest.fn(),
-}));
-useLocation.mockImplementation(() => ({
-  search: '',
+  useLocation: () => ({
+    search: '?enrollment_failed=true',
+  }),
 }));
 
 // Stub out the enroll button to avoid testing its implementation here
@@ -38,6 +36,8 @@ const CourseHeaderWithContext = ({
 /* eslint-enable react/prop-types */
 
 describe('<CourseHeader />', () => {
+  // eslint-disable-next-line no-unused-vars
+  let useDispatchSpy;
   const initialAppState = {
     enterpriseConfig: {
       slug: 'test-enterprise-slug',
@@ -186,51 +186,17 @@ describe('<CourseHeader />', () => {
     expect(screen.queryByText('Enroll')).not.toBeInTheDocument();
   });
 
-  test.each`
-    enrollmentFailed  | failureReason
-    ${''}             | ${''}
-    ${'true'}         | ${''}
-    ${''}             | ${'dsc_denied'}
-  `(
-    'does not render alert when `enrollment_failed=$enrollmentFailed` or `failure_reason=$failureReason`',
-    ({ enrollmentFailed, failureReason }) => {
-      useLocation.mockImplementation(() => ({
-        search: `?enrollment_failed=${enrollmentFailed}&failure_reason=${failureReason}`,
-      }));
+  test('renders an enrollment failed status alert when the enrollment failed query param is present', () => {
+    render(
+      <CourseHeaderWithContext
+        initialAppState={initialAppState}
+        initialCourseState={initialCourseState}
+        initialUserSubsidyState={initialUserSubsidyState}
+      />,
+    );
 
-      render(
-        <CourseHeaderWithContext
-          initialAppState={initialAppState}
-          initialCourseState={initialCourseState}
-          initialUserSubsidyState={initialUserSubsidyState}
-        />,
-      );
-      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
-    },
-  );
-
-  test.each`
-    enrollmentFailed  | failureReason                   | expectedMessage
-    ${'true'}         | ${'dsc_denied'}                 | ${'accept the data sharing consent'}
-    ${'true'}         | ${'verified_mode_unavailable'}  | ${'verified course mode is unavailable'}
-  `(
-    'renders $failureReason alert with `enrollment_failed=$enrollmentFailed` and `failure_reason=$failureReason`',
-    ({ enrollmentFailed, failureReason, expectedMessage }) => {
-      useLocation.mockImplementation(() => ({
-        search: `?enrollment_failed=${enrollmentFailed}&failure_reason=${failureReason}`,
-      }));
-
-      render(
-        <CourseHeaderWithContext
-          initialAppState={initialAppState}
-          initialCourseState={initialCourseState}
-          initialUserSubsidyState={initialUserSubsidyState}
-        />,
-      );
-      expect(screen.queryByRole('alert')).toBeInTheDocument();
-      expect(screen.queryByText(expectedMessage, { exact: false })).toBeInTheDocument();
-    },
-  );
+    expect(screen.queryByRole('alert')).toBeInTheDocument();
+  });
 
   describe('renders program messaging', () => {
     const courseStateWithProgramType = (type) => ({
